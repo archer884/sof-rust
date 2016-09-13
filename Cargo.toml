@@ -1,0 +1,19 @@
+[package]
+name = "sof-rust"
+version = "0.1.0"
+authors = ["J/A <archer884@gmail.com>"]
+
+[dependencies]
+chrono = {version = "*", features = ["serde"]}
+clippy = {version = "*", optional = true}
+iron = "*"
+persistent = "*"
+rand = "*"
+router = "*"
+serde = "*"
+serde_json = "*"
+serde_macros = "*"
+
+[features]
+default = []
+ssl = ["iron/ssl"]
