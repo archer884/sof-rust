@@ -10,17 +10,17 @@ impl CookieService {
     }
     
     pub fn get(&self) -> &Cookie {
-        rand::thread_rng().choose(&self.cookies).unwrap()
+        rand::thread_rng().choose(&self.cookies).expect("there are no damn cookies in here")
     }
 
-    pub fn by_category(&self, category: &str) -> &Cookie {
+    pub fn by_category(&self, category: &str) -> Option<&Cookie> {
         let category = category.replace("-", "").to_lowercase();
         let cookies: Vec<_> = self.cookies
             .iter()
             .filter(|cookie| category == cookie.category().replace("-", "").to_lowercase())
             .collect();
 
-        rand::thread_rng().choose(&cookies).unwrap()
+        rand::thread_rng().choose(&cookies[..]).map(|cookie| *cookie)
     }
 }
 

@@ -33,7 +33,7 @@ fn main() {
         cookie_by_category: get "/api/cookie/:category" => handler::cookie_by_category,
     });
     chain.link(Read::<CookieService>::both(cookies));
-    Iron::new(chain).http("localhost:5000").unwrap();
+    Iron::new(chain).http("localhost:5000").expect("unable to open port");
 }
 
 fn read_cookies() -> Option<CookieService> {
@@ -65,5 +65,6 @@ fn read_cookies() -> Option<CookieService> {
         }
     }
 
+    println!("{} cookies loaded!", cookies.len());
     Some(CookieService::new(cookies))
 }

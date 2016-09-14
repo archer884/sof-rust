@@ -9,8 +9,6 @@ pub fn cookie(req: &mut Request) -> IronResult<Response> {
     let service = req.get::<Read<CookieService>>().map_err(|e| IronError::new(e, "service not available"))?;
     let cookie = service.get();
 
-    println!("{}", cookie.content());
-
     respond(CookieResponse::new(cookie))
 }
 
@@ -18,12 +16,14 @@ pub fn cookie_by_category(req: &mut Request) -> IronResult<Response> {
     use std::io::{Error, ErrorKind};
     
     let service = req.get::<Read<CookieService>>().map_err(|e| IronError::new(e, "service not available"))?;
-    let cookie = match req.extensions.get::<Router>().unwrap().find("category") {
-        None => return Err(IronError::new(Error::new(ErrorKind::NotFound, "category unavailable"), "category unavailable")),
-        Some(category) => service.by_category(category),
-    };
+    let category = req.extensions.get::<Router>()
+        .expect("router not found!?")
+        .find("category");
 
-    println!("{}", cookie.content());
+    let cookie = match category.and_then(|c| service.by_category(c)) {
+        None => return Err(IronError::new(Error::new(ErrorKind::NotFound, "category unavailable"), "category unavailable")),
+        Some(cookie) => cookie
+    };
 
     respond(CookieResponse::new(cookie))
 }
@@ -32,7 +32,7 @@ fn respond<'a>(response: CookieResponse<'a>) -> IronResult<Response> {
     use iron::headers::ContentType;
     use iron::status;
 
-    let mut response = Response::with((status::Ok, serde_json::to_string(&response).unwrap()));
+    let mut response = Response::with((status::Ok, serde_json::to_string(&response).expect("unable to serialize response")));
     response.headers.set(ContentType::json());
     Ok(response)
 }
