@@ -28,7 +28,7 @@ pub fn cookie_by_category(req: &mut Request) -> IronResult<Response> {
     respond(CookieResponse::new(cookie))
 }
 
-fn respond<'a>(response: CookieResponse<'a>) -> IronResult<Response> {
+fn respond(response: CookieResponse) -> IronResult<Response> {
     use iron::headers::ContentType;
     use iron::status;
 
