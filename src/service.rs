@@ -14,10 +14,9 @@ impl CookieService {
     }
 
     pub fn by_category(&self, category: &str) -> Option<&Cookie> {
-        let category = category.replace("-", "").to_lowercase();
         let cookies: Vec<_> = self.cookies
             .iter()
-            .filter(|cookie| category == cookie.category().replace("-", "").to_lowercase())
+            .filter(|cookie| category == cookie.category())
             .collect();
 
         rand::thread_rng().choose(&cookies[..]).map(|cookie| *cookie)
